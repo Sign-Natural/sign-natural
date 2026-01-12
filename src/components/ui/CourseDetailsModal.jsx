@@ -176,7 +176,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
           <motion.div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
           <motion.div className="relative z-10 w-full max-w-3xl bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="flex justify-between px-5 py-4 border-b">
+            <div className="flex justify-between px-5 py-4 ">
               <h3 className="text-lg font-semibold">Course details</h3>
               <button onClick={onClose}>
                 <XMarkIcon className="w-5 h-5" />
@@ -225,7 +225,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
                       attendees.map((a, i) => (
                         <input
                           key={i}
-                          className="w-full border px-2 py-1 rounded text-xs"
+                          className="w-full shadow px-2 py-1 rounded text-xs"
                           placeholder="Attendee email"
                           value={a.email}
                           onChange={(e) => {
@@ -250,7 +250,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
                     {!isAuthed() && (
                       <>
                         <input
-                          className="w-full border px-2 py-1 rounded text-xs"
+                          className="w-full shadow px-2 py-1 rounded text-xs"
                           placeholder="Your full name"
                           value={guestContact.name}
                           onChange={(e) =>
@@ -258,7 +258,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
                           }
                         />
                         <input
-                          className="w-full border px-2 py-1 rounded text-xs"
+                          className="w-full shadow px-2 py-1 rounded text-xs"
                           placeholder="Your email"
                           value={guestContact.email}
                           onChange={(e) =>
