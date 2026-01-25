@@ -24,7 +24,11 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
   // ORIGINAL UI STATE (unchanged)
   const [bookForOthers, setBookForOthers] = useState(false);
   const [attendees, setAttendees] = useState([]);
-  const [guestContact, setGuestContact] = useState({ name: "", email: "" });
+  const [guestContact, setGuestContact] = useState({
+    name: "",
+    email: "",
+    phone: "",
+  });
 
   const navigate = useNavigate();
   const { bookItem } = useBook();
@@ -66,10 +70,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
 
         (res.data || []).forEach((b) => {
           const itemId = b.item?._id || b.item;
-          if (
-            String(itemId) === String(courseId) &&
-            b.status !== "cancelled"
-          ) {
+          if (String(itemId) === String(courseId) && b.status !== "cancelled") {
             if (Array.isArray(b.attendees) && b.attendees.length > 0) {
               others = true;
             } else {
@@ -121,21 +122,23 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
 
     // contact (always required)
     const contact = isAuthed()
-      ? {
-          name: getUser()?.name || "Registered User",
-          email: getUser()?.email,
-        }
-      : guestContact;
-
-    if (!contact?.name || !contact?.email) {
-      setBookingError("Contact name and email are required.");
-      return;
+  ? {
+      name: getUser()?.name || "Registered User",
+      email: getUser()?.email,
+      phone: guestContact.phone,
     }
+  : guestContact;
+
+
+   if (!contact?.name || !contact?.email || !contact?.phone) {
+  setBookingError("Name, email and phone number are required.");
+  return;
+}
+
 
     // attendees validation
     if (bookForOthers) {
-      const invalid =
-        attendees.length === 0 || attendees.some((a) => !a.email);
+      const invalid = attendees.length === 0 || attendees.some((a) => !a.email);
       if (invalid) {
         setBookingError("Please add at least one attendee email.");
         return;
@@ -154,7 +157,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
       // ✅ ADD
       if (!isAuthed()) {
         setGuestSuccess(
-          "Booking successful! We will contact you via email shortly."
+          "Booking successful! We will contact you via email shortly.",
         );
       }
     } catch (e) {
@@ -173,7 +176,10 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <motion.div className="absolute inset-0 bg-black/40" onClick={onClose} />
+          <motion.div
+            className="absolute inset-0 bg-black/40"
+            onClick={onClose}
+          />
 
           <motion.div className="relative z-10 w-full max-w-3xl bg-white rounded-2xl shadow-lg overflow-hidden">
             <div className="flex justify-between px-5 py-4 ">
@@ -247,26 +253,46 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
                       </button>
                     )}
 
-                    {!isAuthed() && (
-                      <>
-                        <input
-                          className="w-full shadow px-2 py-1 rounded text-xs"
-                          placeholder="Your full name"
-                          value={guestContact.name}
-                          onChange={(e) =>
-                            setGuestContact({ ...guestContact, name: e.target.value })
-                          }
-                        />
-                        <input
-                          className="w-full shadow px-2 py-1 rounded text-xs"
-                          placeholder="Your email"
-                          value={guestContact.email}
-                          onChange={(e) =>
-                            setGuestContact({ ...guestContact, email: e.target.value })
-                          }
-                        />
-                      </>
-                    )}
+                    <>
+                      {!isAuthed() && (
+                        <>
+                          <input
+                            className="w-full shadow px-2 py-1 rounded text-xs"
+                            placeholder="Your full name"
+                            value={guestContact.name}
+                            onChange={(e) =>
+                              setGuestContact({
+                                ...guestContact,
+                                name: e.target.value,
+                              })
+                            }
+                          />
+                          <input
+                            className="w-full shadow px-2 py-1 rounded text-xs"
+                            placeholder="Your email"
+                            value={guestContact.email}
+                            onChange={(e) =>
+                              setGuestContact({
+                                ...guestContact,
+                                email: e.target.value,
+                              })
+                            }
+                          />
+                        </>
+                      )}
+
+                      <input
+                        className="w-full shadow px-2 py-1 rounded text-xs"
+                        placeholder="Phone number"
+                        value={guestContact.phone}
+                        onChange={(e) =>
+                          setGuestContact({
+                            ...guestContact,
+                            phone: e.target.value,
+                          })
+                        }
+                      />
+                    </>
                   </div>
 
                   <button
@@ -281,22 +307,20 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
                     {bookingInProgress
                       ? "Booking…"
                       : !bookForOthers && hasSelfBooked
-                      ? "Already Booked (Myself)"
-                      : bookForOthers && hasOthersBooked
-                      ? "Already Booked (Others)"
-                      : course.type === "free"
-                      ? "Start Learning"
-                      : "Book"}
+                        ? "Already Booked (Myself)"
+                        : bookForOthers && hasOthersBooked
+                          ? "Already Booked (Others)"
+                          : course.type === "free"
+                            ? "Start Learning"
+                            : "Book"}
                   </button>
 
                   {bookingError && (
                     <div className="text-sm text-red-600">{bookingError}</div>
                   )}
-                   {/* ✅ ADD */}
+                  {/* ✅ ADD */}
                   {guestSuccess && (
-                    <div className="text-sm text-green-600">
-                      {guestSuccess}
-                    </div>
+                    <div className="text-sm text-green-600">{guestSuccess}</div>
                   )}
                 </div>
               </div>

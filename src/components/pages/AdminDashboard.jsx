@@ -95,7 +95,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Active panel */}
-          <div className="min-h-60">
+          <div className="min-h-70 ">
             <ActiveComponent />
           </div>
         </div>

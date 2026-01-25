@@ -41,12 +41,14 @@ export default function AdminSidebar({ open = false, onClose = () => {} }) {
 
   return (
     <SidebarShell
-      open={open}
-      onClose={onClose}
-      navItems={nav}
-      activeKey={active}
-      sectionLabel="Admin menu"
-      widthClass="lg:w-72"
-    />
+  open={open}
+  onClose={onClose}
+  navItems={nav}
+  activeKey={active}
+  sectionLabel="Admin menu"
+  widthClass="lg:w-40"
+  iconOnly
+/>
+
   );
 }

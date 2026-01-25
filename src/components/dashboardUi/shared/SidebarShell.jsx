@@ -10,6 +10,7 @@ export default function SidebarShell({
   sectionLabel = "Navigation",
   logoSrc = "/logo2.png",
   widthClass = "lg:w-72",
+  iconOnly = false,
 }) {
   const [user, setUser] = useState({ name: "Guest", role: "Member", avatar: "/avatar-placeholder.png" });
 
@@ -30,20 +31,22 @@ export default function SidebarShell({
     }
   }, []);
 
-  const NavList = ({ onItemClick }) => (
-    <nav className="space-y-1">
-      {navItems.map((item) => (
-        <TabLink
-          key={item.key}
-          to={item.to}
-          icon={item.icon}
-          label={item.label}
-          active={activeKey === item.key}
-          onClick={onItemClick}
-        />
-      ))}
-    </nav>
-  );
+ const NavList = ({ onItemClick }) => (
+  <nav className="space-y-1">
+    {navItems.map((item) => (
+      <TabLink
+        key={item.key}
+        to={item.to}
+        icon={item.icon}
+        label={item.label}
+        active={activeKey === item.key}
+        onClick={onItemClick}
+        iconOnly={iconOnly}  
+      />
+    ))}
+  </nav>
+);
+
 
   const Desktop = (
     <aside className={`hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex ${widthClass} lg:flex-col bg-white shadow`}>
@@ -56,7 +59,7 @@ export default function SidebarShell({
         <NavList />
       </div>
 
-      <div className="p-4 border-t">
+      <div className="p-4 shadow">
         <div className="text-xs text-gray-500 mb-2">Signed in as</div>
         <div className="flex items-center gap-3">
           <img

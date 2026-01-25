@@ -21,7 +21,11 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
 
   const [bookForOthers, setBookForOthers] = useState(false);
   const [attendees, setAttendees] = useState([]);
-  const [guestContact, setGuestContact] = useState({ name: "", email: "" });
+  const [guestContact, setGuestContact] = useState({
+    name: "",
+    email: "",
+    phone: "",
+  });
 
   const { bookItem } = useBook();
 
@@ -87,7 +91,7 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
   /* ---------------- Handle booking ---------------- */
   const handleBook = async () => {
     setBookingError("");
-    setGuestSuccess(""); 
+    setGuestSuccess("");
 
     if (!bookForOthers && hasSelfBooked) {
       setBookingError("You have already booked this workshop for yourself.");
@@ -105,20 +109,22 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
     }
 
     const contact = isAuthed()
-      ? {
-          name: getUser()?.name || "Registered User",
-          email: getUser()?.email,
-        }
-      : guestContact;
-
-    if (!contact?.name || !contact?.email) {
-      setBookingError("Contact name and email are required.");
-      return;
+  ? {
+      name: getUser()?.name || "Registered User",
+      email: getUser()?.email,
+      phone: guestContact.phone,
     }
+  : guestContact;
+
+
+    if (!contact?.name || !contact?.email || !contact?.phone) {
+  setBookingError("Name, email and phone number are required.");
+  return;
+}
+
 
     if (bookForOthers) {
-      const invalid =
-        attendees.length === 0 || attendees.some((a) => !a.email);
+      const invalid = attendees.length === 0 || attendees.some((a) => !a.email);
       if (invalid) {
         setBookingError("Please add at least one attendee email.");
         return;
@@ -137,7 +143,7 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
       // ✅ ADD (guest success message)
       if (!isAuthed()) {
         setGuestSuccess(
-          "Booking successful! We will contact you via email shortly."
+          "Booking successful! We will contact you via email shortly.",
         );
       }
     } catch (e) {
@@ -156,7 +162,10 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <motion.div className="absolute inset-0 bg-black/40" onClick={onClose} />
+          <motion.div
+            className="absolute inset-0 bg-black/40"
+            onClick={onClose}
+          />
 
           <motion.div className="relative z-10 w-full max-w-3xl bg-white rounded-2xl shadow-lg overflow-hidden">
             <div className="flex justify-between px-5 py-4 ">
@@ -178,7 +187,9 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
 
                 <div className="p-5 space-y-3">
                   <h2 className="text-xl font-semibold">{workshop.title}</h2>
-                  <p className="text-sm text-gray-600">{workshop.description}</p>
+                  <p className="text-sm text-gray-600">
+                    {workshop.description}
+                  </p>
 
                   {/* UI preserved */}
                   <div className="space-y-2">
@@ -230,26 +241,46 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
                       </button>
                     )}
 
-                    {!isAuthed() && (
-                      <>
-                        <input
-                          className="w-full shadow px-2 py-1 rounded text-xs"
-                          placeholder="Your full name"
-                          value={guestContact.name}
-                          onChange={(e) =>
-                            setGuestContact({ ...guestContact, name: e.target.value })
-                          }
-                        />
-                        <input
-                          className="w-full shadow px-2 py-1 rounded text-xs"
-                          placeholder="Your email"
-                          value={guestContact.email}
-                          onChange={(e) =>
-                            setGuestContact({ ...guestContact, email: e.target.value })
-                          }
-                        />
-                      </>
-                    )}
+                    <>
+                      {!isAuthed() && (
+                        <>
+                          <input
+                            className="w-full shadow px-2 py-1 rounded text-xs"
+                            placeholder="Your full name"
+                            value={guestContact.name}
+                            onChange={(e) =>
+                              setGuestContact({
+                                ...guestContact,
+                                name: e.target.value,
+                              })
+                            }
+                          />
+                          <input
+                            className="w-full shadow px-2 py-1 rounded text-xs"
+                            placeholder="Your email"
+                            value={guestContact.email}
+                            onChange={(e) =>
+                              setGuestContact({
+                                ...guestContact,
+                                email: e.target.value,
+                              })
+                            }
+                          />
+                        </>
+                      )}
+
+                      <input
+                        className="w-full shadow px-2 py-1 rounded text-xs"
+                        placeholder="Phone number"
+                        value={guestContact.phone}
+                        onChange={(e) =>
+                          setGuestContact({
+                            ...guestContact,
+                            phone: e.target.value,
+                          })
+                        }
+                      />
+                    </>
                   </div>
 
                   <button
@@ -264,10 +295,10 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
                     {bookingInProgress
                       ? "Booking…"
                       : !bookForOthers && hasSelfBooked
-                      ? "Already Booked (Myself)"
-                      : bookForOthers && hasOthersBooked
-                      ? "Already Booked (Others)"
-                      : "Book / Enroll"}
+                        ? "Already Booked (Myself)"
+                        : bookForOthers && hasOthersBooked
+                          ? "Already Booked (Others)"
+                          : "Book / Enroll"}
                   </button>
 
                   {bookingError && (
@@ -275,11 +306,8 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
                   )}
                   {/* ✅ ADD */}
                   {guestSuccess && (
-                    <div className="text-sm text-green-600">
-                      {guestSuccess}
-                    </div>
+                    <div className="text-sm text-green-600">{guestSuccess}</div>
                   )}
-
                 </div>
               </div>
             )}

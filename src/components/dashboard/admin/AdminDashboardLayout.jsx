@@ -95,7 +95,7 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
       )}
 
       {/* Page content wrapper keeps left padding on lg screens */}
-      <div className="lg:pl-72">
+      <div className="lg:pl-40">
         {/* Topbar */}
         <header className="bg-white shadow sticky top-0 z-40">
           <div className="flex items-center justify-between px-3 sm:px-6 py-2 max-w-7xl mx-auto">
@@ -114,7 +114,7 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
 
               <div className="truncate">
                 <h1 className="text-base sm:text-lg font-semibold truncate">{title}</h1>
-                <div className="text-xs text-gray-500 truncate">Admin panel</div>
+                <div className="text-xs text-gray-500 truncate">Admin </div>
               </div>
             </div>
 
