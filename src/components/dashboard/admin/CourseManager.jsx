@@ -65,12 +65,13 @@ export default function CourseManager() {
             <button
               onClick={loadCourses}
               disabled={loading}
-              className="w-full sm:w-auto px-3 py-1 border rounded disabled:opacity-60 text-sm"
+              className="w-full sm:w-auto px-3 py-1 shadow rounded disabled:opacity-60 text-sm"
             >
               {loading ? "Loading…" : "Refresh"}
             </button>
             <button
-              onClick={() => setSelected({})}
+              onClick={() => setSelected({ _id: null })}
+
               className="w-full sm:w-auto px-3 py-1 bg-green-700 text-white rounded text-sm"
             >
               + New Course

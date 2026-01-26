@@ -60,34 +60,38 @@ export default function CourseForm({ selected, onSuccess }) {
   const [libAsset, setLibAsset] = useState(null);
 
   useEffect(() => {
-    if (selected) {
-      setForm({
-        title: selected.title || "",
-        description: selected.description || "",
-        price: selected.price ?? "",
-        duration: selected.duration || "",
-        category: selected.category || "",
-        type: selected.type || "free",
-        image: null,
-        location: selected.location || "",
-      });
+  if (selected?._id) {
+    // EDIT MODE
+    setForm({
+      title: selected.title || "",
+      description: selected.description || "",
+      price: selected.price ?? "",
+      duration: selected.duration || "",
+      category: selected.category || "",
+      type: selected.type || "free",
+      image: null,
+      location: selected.location || "",
+    });
 
-      setImagePreview(selected.image || null);
-      if (selected.videoUrl) {
-        setVideoUrl(selected.videoUrl);
-        setVideoPreview(selected.videoUrl);
-      } else if (selected.video) {
-        setVideoPreview(selected.video);
-      } else {
-        setVideoPreview(null);
-      }
+    setImagePreview(selected.image || null);
 
-      setVideoFile(null);
-      setLibAsset(null);
+    if (selected.videoUrl) {
+      setVideoUrl(selected.videoUrl);
+      setVideoPreview(selected.videoUrl);
+    } else if (selected.video) {
+      setVideoPreview(selected.video);
     } else {
-      resetForm();
+      setVideoPreview(null);
     }
-  }, [selected]);
+
+    setVideoFile(null);
+    setLibAsset(null);
+  } else {
+    // CREATE MODE
+    resetForm();
+  }
+}, [selected]);
+
 
   useEffect(() => {
   if (form.type !== "free") {
@@ -186,9 +190,10 @@ const onPickerSelect = (asset) => {
  const clearVideoSelection = () => {
   setVideoPreview(null);
   setVideoFile(null);
-  setVideoUrl("");       // this triggers backend delete
+  setVideoUrl("__DELETE__");   // special flag
   setLibAsset(null);
 };
+
 
 
   const handleSubmit = async (e) => {
@@ -224,8 +229,7 @@ const onPickerSelect = (asset) => {
       } else if (videoPreview && typeof videoPreview === "string" && videoPreview.startsWith("http")) {
         fd.append("videoUrl", videoPreview);
       }
-      else if (selected?.videoUrl || selected?.videoPublicId) {
-  // Explicit delete
+   else if (videoUrl === "__DELETE__") {
   fd.append("videoUrl", "");
 }
 
@@ -366,7 +370,7 @@ const onPickerSelect = (asset) => {
               <span>{imageUploading ? "Processing…" : "Upload Image"}</span>
             </button>
 
-            <button type="button" onClick={() => { setPickerOpen(true); }} className="px-4 py-2 border rounded">
+            <button type="button" onClick={() => { setPickerOpen(true); }} className="px-4 py-2 shadow rounded">
               Library
             </button>
 
@@ -436,7 +440,7 @@ const onPickerSelect = (asset) => {
                   type="button"
                   onClick={clearVideoSelection}
                   title="Remove video"
-                  className="absolute right-2 top-2 z-20 bg-white/90 hover:bg-white text-gray-700 border rounded-full p-1 shadow"
+                  className="absolute right-2 top-2 z-20 bg-white/90 hover:bg-white text-gray-700  rounded-full p-1 shadow"
                 >
                   <RemoveIcon />
                 </button>
