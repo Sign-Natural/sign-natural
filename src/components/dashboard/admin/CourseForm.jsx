@@ -89,6 +89,16 @@ export default function CourseForm({ selected, onSuccess }) {
     }
   }, [selected]);
 
+  useEffect(() => {
+  if (form.type !== "free") {
+    setVideoFile(null);
+    setVideoUrl("");
+    setVideoPreview(null);
+    setLibAsset(null);
+  }
+}, [form.type]);
+
+
   const resetForm = () => {
     setForm({
       title: "",
@@ -173,12 +183,13 @@ const onPickerSelect = (asset) => {
     setForm((p) => ({ ...p, image: null }));
   }
 };
-  const clearVideoSelection = () => {
-    setVideoPreview(null);
-    setVideoFile(null);
-    setVideoUrl("");
-    setLibAsset(null);
-  };
+ const clearVideoSelection = () => {
+  setVideoPreview(null);
+  setVideoFile(null);
+  setVideoUrl("");       // this triggers backend delete
+  setLibAsset(null);
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -213,6 +224,11 @@ const onPickerSelect = (asset) => {
       } else if (videoPreview && typeof videoPreview === "string" && videoPreview.startsWith("http")) {
         fd.append("videoUrl", videoPreview);
       }
+      else if (selected?.videoUrl || selected?.videoPublicId) {
+  // Explicit delete
+  fd.append("videoUrl", "");
+}
+
 
       if (selected?._id) {
         await updateCourse(selected._id, fd);
@@ -372,6 +388,7 @@ const onPickerSelect = (asset) => {
         </div>
 
         {/* Video: YouTube OR Upload OR Library — simplified & rearranged UI */}
+        {form.type === "free" && (
         <div>
           <label className="block text-sm font-medium mb-1 text-gray-700">Course Video (YouTube or Upload)</label>
 
@@ -447,6 +464,7 @@ const onPickerSelect = (asset) => {
             )}
           </div>
         </div>
+        )}
 
         {/* Actions */}
         <div className="flex items-center justify-between mt-4">
