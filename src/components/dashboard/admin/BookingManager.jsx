@@ -114,7 +114,7 @@ export default function BookingManager() {
             <div>Item</div>
             <div>Type</div>
             <div>Price</div>
-            <div>Scheduled</div>
+            {/* <div>Scheduled</div> */}
             <div>Status</div>
             <div></div>
           </div>
@@ -186,7 +186,7 @@ export default function BookingManager() {
                       </div>
 
                       <div
-                        className="text-sm truncate"
+                        className="text-sm "
                         title={b.item?.title || b.item?.name}
                       >
                         {b.item?.title || b.item?.name || "—"}
@@ -198,7 +198,7 @@ export default function BookingManager() {
                         {typeof b.price === "number" ? `₵${b.price}` : "—"}
                       </div>
 
-                      <div className="py-3 text-sm">{fmtDate(b.scheduledAt)}</div>
+                      {/* <div className="py-3 text-sm">{fmtDate(b.scheduledAt)}</div> */}
 
                       <div>
                         <span className="px-2 py-1 rounded-full text-xs bg-gray-100">
